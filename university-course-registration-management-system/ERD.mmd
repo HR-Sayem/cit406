@@ -1,0 +1,82 @@
+erDiagram
+    department {
+        INTEGER department_id PK
+        VARCHAR department_name UK
+        VARCHAR office_location
+        VARCHAR phone_number
+    }
+    student {
+        INTEGER student_id PK
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR email UK
+        VARCHAR phone
+        DATE date_of_birth
+        INTEGER department_id FK
+    }
+    instructor {
+        INTEGER instructor_id PK
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR email UK
+        VARCHAR phone
+        INTEGER department_id FK
+    }
+    course {
+        INTEGER course_id PK
+        VARCHAR course_code UK
+        VARCHAR course_name
+        INTEGER credit_hours
+        TEXT description
+        INTEGER department_id FK
+    }
+    semester {
+        INTEGER semester_id PK
+        VARCHAR semester_name
+        INTEGER academic_year
+        DATE start_date
+        DATE end_date
+    }
+    classroom {
+        INTEGER classroom_id PK
+        VARCHAR building_name
+        VARCHAR room_number
+        INTEGER capacity
+    }
+    section {
+        INTEGER section_id PK
+        VARCHAR section_number
+        VARCHAR schedule
+        INTEGER maximum_capacity
+        INTEGER course_id FK
+        INTEGER instructor_id FK
+        INTEGER semester_id FK
+        INTEGER classroom_id FK
+    }
+    enrollment {
+        INTEGER enrollment_id PK
+        INTEGER student_id FK
+        INTEGER section_id FK
+        DATE enrollment_date
+        VARCHAR enrollment_status
+        VARCHAR grade
+    }
+    enrollment_audit {
+        BIGINT audit_id PK
+        INTEGER enrollment_id
+        VARCHAR old_status
+        VARCHAR new_status
+        TIMESTAMPTZ changed_at
+        TEXT changed_by
+    }
+    department ||--o{ student : major
+    department ||--o{ instructor : employs
+    department ||--o{ course : owns
+    course ||--o{ section : offered_as
+    instructor ||--o{ section : teaches
+    semester ||--o{ section : scheduled_in
+    classroom ||--o{ section : assigned_to
+    student ||--o{ enrollment : registers
+    section ||--o{ enrollment : has
+
+%% enrollment_audit.enrollment_id is an audit identifier, not a foreign key.
